@@ -16,6 +16,29 @@ This hybrid design enables both **human-like responses** and **high-value analyt
 
 ---
 
+## 📸 Screenshots Gallery
+
+### 🌞 Light Theme  
+<img width="350" height="500"  alt="Image" src="https://github.com/user-attachments/assets/eda5b0c0-6014-48fe-983b-58a12624c63a" />
+
+### 🌙 Dark Theme  
+<img width="350" height="500"  alt="Image" src="https://github.com/user-attachments/assets/533f8682-4516-48c5-b847-41dbd448d211" />
+
+### 💬 Sentiment Chatbot — Main Screen  
+<img width="350" height="500" alt="Image" src="https://github.com/user-attachments/assets/2dfae538-3953-44ad-a0d7-585ea74a0dc2" />
+
+### 📊 Conversation Analysis Panel  
+<img width="350" height="500"  alt="Image" src="https://github.com/user-attachments/assets/c6944c60-ac69-40fc-9802-e97f9c9307c0" />
+
+### 📝 Generate Report & Export PDF  
+<img width="350" height="562" alt="Image" src="https://github.com/user-attachments/assets/afc608c5-82c1-433b-955b-4f8e6e75b7ba" />
+
+### 📂 Save / Load / Export Menu  
+<img width="350" height="500" alt="Image" src="https://github.com/user-attachments/assets/fcc42e0e-3ba1-406d-aa78-e9ea98287efd" />
+
+---
+
+
 ## ⭐ Why This Model Is Superior
 ### 1. Deeper Contextual Empathy
 RoBERTa provides **pre-validated sentiment labels** and confidence scores, letting Gemini focus on generating strategic, empathetic responses.
