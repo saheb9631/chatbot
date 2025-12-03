@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Assignment: Chatbot with Sentiment Analysis — Premium UI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* dark palette */
+      --bg-dark:#0b1220;
+      --panel-dark:#071027;
+      --muted-dark:#94a3b8;
+      --accent-dark:#2563eb;
+      --good-dark:#10b981;
+      --bad-dark:#ef4444;
+      --neutral-dark:#f59e0b;
+      --glass-dark: rgba(255,255,255,0.03);
+
+      /* light palette */
+      --bg-light:#f5f8fb;
+      --panel-light:#ffffff;
+      --muted-light:#475569;
+      --accent-light:#2563eb;
+      --good-light:#047857;
+      --bad-light:#b91c1c;
+      --neutral-light:#92400e;
+      --glass-light: rgba(2,6,23,0.04);
+
+      --radius:12px;
+      --transition-fast: 220ms;
+      --transition-medium: 350ms;
+    }
+
+    /* Default (dark) */
+    body {
+      --bg: var(--bg-dark);
+      --panel: var(--panel-dark);
+      --muted: var(--muted-dark);
+      --accent: var(--accent-dark);
+      --good: var(--good-dark);
+      --bad: var(--bad-dark);
+      --neutral: var(--neutral-dark);
+      --glass: var(--glass-dark);
+      background: var(--bg);
+      color: #e6eef8;
+      transition: background var(--transition-medium) ease, color var(--transition-medium) ease;
+    }
+
+    /* Light mode */
+    body.light {
+      --bg: var(--bg-light);
+      --panel: var(--panel-light);
+      --muted: var(--muted-light);
+      --accent: var(--accent-light);
+      --good: var(--good-light);
+      --bad: var(--bad-light);
+      --neutral: var(--neutral-light);
+      --glass: var(--glass-light);
+      background: var(--bg);
+      color: #0b1220;
+    }
+
+    html,body{height:100%; margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+    .container{max-width:1200px;margin:18px auto;padding:18px;display:grid;grid-template-columns:220px 1fr 380px;gap:18px;align-items:start}
+    .card{
+      background:var(--panel);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:0 12px 40px rgba(2,6,23,0.45);
+      overflow:hidden;
+      transition: background var(--transition-medium) ease, box-shadow var(--transition-medium) ease, color var(--transition-medium) ease, transform var(--transition-medium) cubic-bezier(.2,.9,.2,1);
+      color: inherit;
+    }
+    body.light .card { box-shadow: 0 8px 24px rgba(15,23,42,0.06); }
+
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#34d399,#60a5fa);transition: transform var(--transition-medium) ease;}
+    .muted{color:var(--muted);font-size:13px; transition: color var(--transition-fast) ease;}
+
+    /* left nav */
+    .nav{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .nav button{background:transparent;border:0;color:inherit;padding:10px;border-radius:10px;text-align:left;cursor:pointer;font-weight:700;transition:background var(--transition-fast) ease}
+    .nav button:hover{background:var(--glass)}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* theme toggle UI */
+    .theme-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:12px}
+    .theme-label{font-weight:700}
+    .theme-note{font-size:13px;color:var(--muted)}
+    .toggle{width:52px;height:30px;border-radius:30px;background:var(--glass);position:relative;cursor:pointer;border:1px solid rgba(0,0,0,0.06);transition: background var(--transition-fast) ease}
+    .toggle .knob{width:22px;height:22px;border-radius:50%;background:var(--accent);position:absolute;top:3px;left:4px;box-shadow:0 6px 18px rgba(2,6,23,0.25);transition:left var(--transition-fast) cubic-bezier(.2,.9,.2,1), transform var(--transition-fast) ease}
+    body.light .toggle .knob { left: 26px; transform: rotate(8deg); }
+
+    /* center chat */
+    .chat-area{display:flex;flex-direction:column;height:78vh}
+    .header{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:8px}
+    .title{font-weight:800;font-size:18px; color:var(--muted)}
+    .messages{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;transition: background var(--transition-medium)}
+    .msg-row{display:flex;gap:12px;align-items:flex-end;max-width:85%}
+    .msg-row.user{margin-left:auto;flex-direction:row-reverse}
+    .avatar{width:42px;height:42px;border-radius:10px;background:#0ea5a4;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:14px;transition: background var(--transition-medium)}
+    .bubble{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.03);line-height:1.35;transition: background var(--transition-medium), color var(--transition-medium)}
+    .bubble.user{background:linear-gradient(90deg,#0f1724,#0b1220);color:#e6eef8;border-bottom-right-radius:4px}
+    body.light .bubble.user { background: linear-gradient(90deg,#eef2ff,#f8fbff); color: #0b1220; }
+    .meta{font-size:12px;color:var(--muted);margin-top:6px;transition: color var(--transition-fast)}
+    .sent-badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+    .sent-good{background:rgba(16,185,129,0.12);color:var(--good);border:1px solid rgba(16,185,129,0.18)}
+    .sent-bad{background:rgba(239,68,68,0.08);color:var(--bad);border:1px solid rgba(239,68,68,0.12)}
+    .sent-neutral{background:rgba(245,158,11,0.08);color:var(--neutral);border:1px solid rgba(245,158,11,0.12)}
+    .typing{display:flex;gap:6px;align-items:center}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:0.9;animation:blink 1s infinite}
+    .dot:nth-child(2){animation-delay:.12s}.dot:nth-child(3){animation-delay:.24s}
+    @keyframes blink{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+
+    /* composer */
+    .composer{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.03);align-items:center}
+    .composer input{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast)}
+    body.light .composer input { background: #fff; color: #0b1220; border-color: rgba(2,6,23,0.06); }
+
+    .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:800;transition: transform 120ms ease}
+    .btn:active{ transform: translateY(1px) }
+
+    /* right report */
+    .report-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .kpi{display:flex;gap:8px;align-items:center}
+    .kpi .big{font-size:22px;font-weight:800}
+    .trend{font-size:13px;color:var(--muted)}
+    .report-body{margin-top:10px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border-radius:8px;overflow:auto;max-height:54vh;transition: background var(--transition-medium)}
+    .report-body .section{margin-bottom:12px}
+    .report-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+    .chart-wrap{height:160px;margin-top:10px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-weight:700}
+
+    /* responsive */
+    @media (max-width:1100px){ .container{grid-template-columns:1fr;grid-auto-rows:auto} .report-body{max-height:30vh} }
+
+    /* Explicit light-mode overrides to ensure visibility */
+    body.light .title,
+    body.light .brand div > div,
+    body.light .small,
+    body.light .muted,
+    body.light .theme-label,
+    body.light .theme-note,
+    body.light .nav button,
+    body.light .meta,
+    body.light .msg-row .meta,
+    body.light .avatar,
+    body.light .report-body,
+    body.light #llmReport,
+    body.light #statementList,
+    body.light .kpi .big,
+    body.light .trend,
+    body.light .badge {
+      color: #0b1220 !important;
+    }
+
+    body.light .nav button { opacity: 0.95; }
+    body.light .bubble { color: #0b1220 !important; background: rgba(15,23,42,0.02) !important; }
+    body.light .bubble.user { background: linear-gradient(90deg,#eef2ff,#f8fbff) !important; color: #0b1220 !important; }
+    body.light .sent-bad { background: rgba(252,165,165,0.18); color:#b91c1c !important; border-color: rgba(239,68,68,0.18); }
+    body.light .sent-good { background: rgba(167,243,208,0.18); color:#065f46 !important; border-color: rgba(16,185,129,0.18); }
+    body.light .sent-neutral { background: rgba(254,215,170,0.18); color:#92400e !important; border-color: rgba(245,158,11,0.18); }
+
+    /* ensure buttons readable on light bg */
+    body.light .btn { color: #fff; }
+    body.light .badge { background: rgba(15,23,42,0.04); color: #0b1220; }
+
+    /* transitions */
+    .card, .bubble, .report-body, .messages, .nav button, .composer input {
+      transition: background-color var(--transition-medium) ease, color var(--transition-medium) ease, border-color var(--transition-fast) ease, box-shadow var(--transition-medium) ease;
+    }
+
+    /* small animation when toggling */
+    .theme-fade { transform-origin: center top; transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 300ms ease; }
+    body.light .theme-fade { transform: scale(1.006); opacity: 0.98; }
+  </style>
+</head>
+<body>
+  <div class="container theme-fade">
+    <!-- left nav -->
+    <div class="card" id="leftCard">
+      <div class="brand">
+        <div class="logo" aria-hidden></div>
+        <div>
+          <div style="font-weight:800">LiaPlus Chat</div>
+          <div class="small">Assignment: Chatbot + Sentiment</div>
+        </div>
+      </div>
+
+      <div class="nav" style="margin-top:12px">
+        <button id="newBtn">➕ New Chat</button>
+        <button id="saveBtn">💾 Save Conversation</button>
+        <button id="loadBtn">📂 Load Saved</button>
+        <button id="exportTxtBtn">⬇️ Export Text</button>
+      </div>
+
+      <!-- Theme toggle -->
+      <div class="theme-row" style="margin-top:14px">
+        <div>
+          <div class="theme-label">Theme</div>
+          <div class="theme-note" id="themeNote">Light</div>
+        </div>
+        <div role="button" tabindex="0" aria-label="Toggle theme" id="themeToggle" class="toggle" title="Toggle light/dark">
+          <div class="knob"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="small">
+       
+      </div>
+    </div>
+
+    <!-- center: chat -->
+    <div class="card chat-area" role="main">
+      <div class="header">
+        <div class="title">Sentiment Chatbot</div>
+        <div class="small">Gemini with RoBERTa</div>
+      </div>
+
+      <div id="messages" class="messages" aria-live="polite"></div>
+
+      <div class="composer">
+        <input id="input" placeholder="Type message and press Enter" />
+        <button id="send" class="btn">Send</button>
+      </div>
+    </div>
+
+    <!-- right: report -->
+    <div class="card" aria-label="Report panel">
+      <div class="report-head">
+        <div>
+          <div style="font-weight:800">Conversation Analysis</div>
+          <div class="small">Tier 1 & Tier 2 visualized</div>
+        </div>
+        <div class="badge" id="statusBadge">Connected</div>
+      </div>
+
+      <div style="margin-top:10px" class="kpi">
+        <div>
+          <div class="small">Overall Sentiment</div>
+          <div class="big" id="overallSent">—</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div class="small">Avg Score</div>
+          <div id="avgScore" style="font-weight:800">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px" class="trend" id="trendText">No data yet</div>
+
+      <div class="report-body" id="reportBody">
+        <div class="section">
+          <div style="font-weight:700">Statement-level Sentiment</div>
+          <div id="statementList" style="margin-top:8px" class="small">No messages yet</div>
+        </div>
+
+        <div class="section">
+          <div style="font-weight:700">LLM-Enhanced Report</div>
+          <div id="llmReport" class="small" style="margin-top:8px">No report yet — click Generate</div>
+          <div class="report-actions" style="margin-top:8px">
+            <button id="genReport" class="btn" style="background:#10b981">Generate Report</button>
+            <button id="exportReport" class="btn" style="background:#475569">Export PDF</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div style="font-weight:700">Sentiment Trend (last points)</div>
+          <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+  <script>
+    // Theme toggle logic and persistence
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    const themeNote = document.getElementById('themeNote');
+    const leftCard = document.getElementById('leftCard');
+
+    function initTheme() {
+      const saved = localStorage.getItem('lia_theme');
+      if (saved === 'light') {
+        body.classList.add('light');
+      } else if (saved === 'dark') {
+        body.classList.remove('light');
+      } else {
+        // default to light (matches your screenshot); change 'light' to 'dark' to default dark
+        body.classList.add('light');
+      }
+      applyThemeVisuals();
+    }
+
+    function applyThemeVisuals() {
+      const isLight = body.classList.contains('light');
+      themeNote.innerText = isLight ? 'Light' : 'Dark';
+      if (isLight) leftCard.classList.add('light'); else leftCard.classList.remove('light');
+    }
+
+    function toggleTheme() {
+      const container = document.querySelector('.theme-fade');
+      container.style.transform = 'scale(1.01)';
+      container.style.opacity = '0.98';
+      setTimeout(()=>{ container.style.transform = ''; container.style.opacity = ''; }, 360);
+
+      if (body.classList.contains('light')) {
+        body.classList.remove('light');
+        localStorage.setItem('lia_theme', 'dark');
+      } else {
+        body.classList.add('light');
+        localStorage.setItem('lia_theme', 'light');
+      }
+      applyThemeVisuals();
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+    themeToggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); toggleTheme(); } });
+
+    initTheme();
+
+    // --- chat app logic (unchanged) ---
+    const messagesEl = document.getElementById('messages');
+    const inputEl = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+    const overallSent = document.getElementById('overallSent');
+    const avgScoreEl = document.getElementById('avgScore');
+    const statementList = document.getElementById('statementList');
+    const genReportBtn = document.getElementById('genReport');
+    const exportReportBtn = document.getElementById('exportReport');
+    const llmReport = document.getElementById('llmReport');
+    const statusBadge = document.getElementById('statusBadge');
+
+    let convHistory = []; // {role, text, time, sentiment_label, sentiment_score}
+    let sentimentPoints = []; // numbers
+
+    // Chart
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    const trendChart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Sentiment', data: [], borderColor:'#60a5fa', backgroundColor:'rgba(96,165,250,0.12)', tension:0.3, fill:true }] },
+      options: { responsive:true, scales:{ y:{ min:-1, max:1 } }, plugins:{legend:{display:false}} }
+    });
+
+    // helpers and rest of JS (unchanged)
+    function formatTime(){ const d = new Date(); return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+    function addMessage(role, text, extras){
+      const row = document.createElement('div');
+      row.className = 'msg-row ' + (role==='user' ? 'user' : 'bot');
+      const ava = document.createElement('div'); ava.className='avatar'; ava.innerText = role==='user' ? 'U' : 'B';
+      const cont = document.createElement('div');
+      const bubble = document.createElement('div'); bubble.className='bubble ' + (role==='user' ? 'user' : 'bot');
+      bubble.innerText = text;
+      const meta = document.createElement('div'); meta.className='meta';
+      let metaText = formatTime();
+      if(extras && extras.sentiment_label){
+        const s = extras.sentiment_label;
+        const score = Number(extras.sentiment_score).toFixed(3);
+        const span = document.createElement('span');
+        span.className = 'sent-badge ' + (s.toLowerCase().includes('neg') ? 'sent-bad' : (s.toLowerCase().includes('pos') ? 'sent-good' : 'sent-neutral'));
+        span.innerText = s + ' (' + score + ')';
+        meta.appendChild(span);
+        meta.appendChild(document.createTextNode('  ·  ' + metaText));
+      } else {
+        meta.innerText = metaText;
+      }
+      cont.appendChild(bubble); cont.appendChild(meta);
+      if(role==='user'){ row.appendChild(cont); row.appendChild(ava); } else { row.appendChild(ava); row.appendChild(cont); }
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    async function sendMessage(){
+      const text = inputEl.value.trim(); if(!text) return;
+      inputEl.value='';
+      addMessage('user', text);
+      convHistory.push({role:'user', text, time: new Date().toISOString()});
+      const typingNode = showTyping();
+      try{
+        const res = await fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({message:text})});
+        const j = await res.json();
+        typingNode.remove();
+        if(j.error){ addMessage('bot', 'Error: ' + j.error); statusBadge.innerText='Error'; return; }
+        addMessage('bot', j.bot);
+        convHistory[convHistory.length-1].sentiment_label = j.sentiment_label;
+        convHistory[convHistory.length-1].sentiment_score = Number(j.sentiment_score);
+        convHistory.push({role:'bot', text: j.bot, time: new Date().toISOString()});
+        updateStatementList();
+        pushSentimentPoint(Number(j.sentiment_score));
+      }catch(err){
+        typingNode.remove();
+        addMessage('bot', 'Network error. Check server logs.');
+        console.error(err);
+      }
+    }
+
+    function showTyping(){
+      const wrap = document.createElement('div'); wrap.className='msg-row bot';
+      const av = document.createElement('div'); av.className='avatar'; av.innerText='B';
+      const box = document.createElement('div'); box.className='bubble bot';
+      const dots = document.createElement('div'); dots.className='typing';
+      const d1=document.createElement('span'); d1.className='dot'; const d2=d1.cloneNode(); const d3=d1.cloneNode();
+      dots.appendChild(d1); dots.appendChild(d2); dots.appendChild(d3);
+      box.appendChild(dots); wrap.appendChild(av); wrap.appendChild(box);
+      messagesEl.appendChild(wrap); messagesEl.scrollTop = messagesEl.scrollHeight;
+      return wrap;
+    }
+
+    function updateStatementList(){
+      const users = convHistory.filter(x=>x.role==='user');
+      if(users.length===0){ statementList.innerText='No user messages yet'; return; }
+      statementList.innerHTML='';
+      users.forEach((u, idx)=>{
+        const line = document.createElement('div'); line.style.marginBottom='8px';
+        const text = document.createElement('div'); text.innerText = (idx+1)+'. ' + u.text; text.style.fontWeight='700';
+        const info = document.createElement('div'); info.className='small';
+        const label = u.sentiment_label || 'N/A'; const score = u.sentiment_score!=null ? Number(u.sentiment_score).toFixed(3) : '--';
+        info.innerHTML = `<span class="sent-badge ${label.toLowerCase().includes('neg') ? 'sent-bad' : (label.toLowerCase().includes('pos') ? 'sent-good' : 'sent-neutral')}">${label} (${score})</span>  <span style="margin-left:10px;color:var(--muted)">time: ${new Date(u.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>`;
+        line.appendChild(text); line.appendChild(info);
+        statementList.appendChild(line);
+      });
+      updateOverall();
+    }
+
+    function updateOverall(){
+      const users = convHistory.filter(x=>x.role==='user' && x.sentiment_score!=null);
+      if(users.length===0){ overallSent.innerText='—'; avgScoreEl.innerText='—'; document.getElementById('trendText').innerText='No data yet'; return; }
+      let sum = 0; users.forEach(u=>sum += Number(u.sentiment_score));
+      const avg = sum / users.length;
+      avgScoreEl.innerText = avg.toFixed(3);
+      let label = 'Neutral'; if(avg > 0.2) label='Positive'; else if(avg < -0.2) label='Negative';
+      overallSent.innerText = label;
+      computeTrend(users.map(u=>u.sentiment_score));
+    }
+
+    function computeTrend(scores){
+      const len = scores.length;
+      if(len < 2){ document.getElementById('trendText').innerText='Not enough data to show trend'; return; }
+      const half = Math.floor(len/2);
+      const firstAvg = scores.slice(0, half).reduce((a,b)=>a+b,0) / Math.max(1, half);
+      const secondAvg = scores.slice(half).reduce((a,b)=>a+b,0) / Math.max(1, len-half);
+      let txt = 'Mood stable';
+      if(secondAvg - firstAvg > 0.15) txt = 'Mood improved (shift positive)';
+      else if(secondAvg - firstAvg < -0.15) txt = 'Mood got worse (shift negative)';
+      else txt = 'Mood roughly stable';
+      document.getElementById('trendText').innerText = txt + ` — firstAvg ${firstAvg.toFixed(3)} → recentAvg ${secondAvg.toFixed(3)}`;
+    }
+
+    function pushSentimentPoint(score){
+      const label = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      trendChart.data.labels.push(label); trendChart.data.datasets[0].data.push(score);
+      if(trendChart.data.labels.length > 20){ trendChart.data.labels.shift(); trendChart.data.datasets[0].data.shift(); }
+      trendChart.update();
+    }
+
+    genReportBtn.addEventListener('click', async ()=>{
+      llmReport.innerText = 'Generating...';
+      try{
+        const res = await fetch('/api/report');
+        const j = await res.json();
+        if(j.error){ llmReport.innerText = 'Error: '+ j.error; return; }
+        let raw = (j.report || '').toString();
+        raw = raw.replace(/^=+\s*\n/gm, '');
+        const html = DOMPurify.sanitize(marked.parse(raw), {ALLOWED_TAGS:['h1','h2','h3','p','ul','ol','li','strong','em','pre','code','br']});
+        llmReport.innerHTML = html;
+      }catch(err){
+        llmReport.innerText = 'Network error generating report';
+        console.error(err);
+      }
+    });
+
+    exportReportBtn.addEventListener('click', ()=>{
+      if(!llmReport.innerHTML || llmReport.innerText.trim()==='No report yet — click Generate') { alert('Generate report first'); return; }
+      const opt = {margin:0.6, filename:'conversation-report.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:1.5}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
+      html2pdf().set(opt).from(llmReport).save();
+    });
+
+    document.getElementById('exportTxtBtn').addEventListener('click', ()=>{
+      const txt = convHistory.map(c=>`${c.role.toUpperCase()}: ${c.text} ${c.sentiment_label ? '→ ' + c.sentiment_label + ' (' + (c.sentiment_score||'--') + ')' : ''}`).join('\n\n');
+      const blob = new Blob([txt], {type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='chat-history.txt'; a.click(); URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById('newBtn').addEventListener('click', ()=>{ if(confirm('Clear conversation?')){ convHistory=[]; sentimentPoints=[]; messagesEl.innerHTML=''; statementList.innerHTML='No messages yet'; llmReport.innerText='No report yet — click Generate'; overallSent.innerText='—'; avgScoreEl.innerText='—'; trendChart.data.labels=[]; trendChart.data.datasets[0].data=[]; trendChart.update(); } });
+    document.getElementById('saveBtn').addEventListener('click', ()=>{ localStorage.setItem('savedConv', JSON.stringify(convHistory)); alert('Conversation saved locally'); });
+    document.getElementById('loadBtn').addEventListener('click', ()=>{ const s=localStorage.getItem('savedConv'); if(!s){ alert('No saved conversation'); return;} convHistory = JSON.parse(s); messagesEl.innerHTML=''; convHistory.forEach(c=> addMessage(c.role, c.text, {sentiment_label:c.sentiment_label, sentiment_score:c.sentiment_score})); updateStatementList(); alert('Loaded saved conversation'); });
+
+    sendBtn.addEventListener('click', sendMessage);
+    inputEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendMessage(); });
+
+    inputEl.focus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+.
+
+🛠️ Phase 1: Install Core Development Tools
+Your laptop needs two main tools: Git (to download the code) and Python (to run the code).
+
+1. Install Git
+Git is the software that handles version control and allows you to download the repository.
+
+Action: Go to the official Git website and download the installer for your operating system (Windows, macOS, or Linux).
+
+Installation: Run the installer. You can usually accept the default settings throughout the process.
+
+2. Install Python
+Python is the programming language the chatbot is written in.
+
+Action: Go to the official Python website and download the latest stable version (e.g., Python 3.11 or newer).
+
+Installation (Crucial Step): When running the installer, ensure you check the box that says "Add python.exe to PATH" before clicking "Install Now." This allows you to run Python commands from any terminal window.
+
+3. Verify Installations
+Open your terminal (Command Prompt, PowerShell, or macOS Terminal) and run these commands to ensure everything is ready:
+
+Bash
+
+# Verify Git
+git --version
+# Verify Python
+python --version
+Both commands should return version numbers.
+
+💻 Phase 2: Get the Code and Configure the Environment
+Now we'll download the project and install all the libraries it needs.
+
+4. Clone the Repository
+Use the link you were given to download the entire project directory.
+
+Bash
+
+# Replace <YOUR_REPOSITORY_LINK> with the link you have
+git clone <YOUR_REPOSITORY_LINK>
+
+# Change into the project directory (e.g., chatbot_project)
+cd chatbot_project
+5. Create a Virtual Environment
+This step is essential to keep the project's many dependencies (like PyTorch and Gemini SDK) isolated from other projects.
+
+Platform	Command to Create	Command to Activate
+Windows	python -m venv venv	.\venv\Scripts\activate
+macOS/Linux	python3 -m venv venv	source venv/bin/activate
+
+Export to Sheets
+
+You should see (venv) appear at the start of your terminal prompt, indicating the environment is active.
+
+6. Install Project Dependencies
+The requirements.txt file lists all the necessary Python libraries.
+
+Bash
+
+# Install all libraries needed for the chatbot (Gemini, Hugging Face, etc.)
+pip install -r requirements.txt
+🔒 Phase 3: Set Up the Secret Key
+You need your personal Gemini API key to allow the bot to generate responses.
+
+7. Obtain and Prepare the API Key
+Action: Generate your own Gemini API Key from the Google AI Studio dashboard.
+
+Action: In the project folder, you should find an example file (e.g., .env_example). Make a copy of it and name the copy .env.
+
+8. Insert Your Key Securely
+Action: Open the new .env file in a text editor (like Notepad, VS Code, or Sublime Text).
+
+Action: Paste your unique key into the designated variable:
+
+# .env file content
+GEMINI_API_KEY="AIzaSy...your_personal_key_here...xYZ"
+(The project uses the python-dotenv library to read this key securely at runtime.)
+
+🚀 Phase 4: Run the Chatbot
+9. Launch the Application
+With the environment active and the key set, you can now run the main script.
+
+Bash
+
+# Run the chatbot program
+python main.py
+The chatbot should initialize the models and prompt you with the welcome message, ready for conversation!

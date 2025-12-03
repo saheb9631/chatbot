@@ -1,0 +1,9 @@
+google-genai          # Required for interacting with the Gemini API
+transformers          # Required for loading and running the Hugging Face RoBERTa model
+torch                 # The underlying deep learning framework for the RoBERTa model
+
+# Sentiment Analysis Utility
+nltk                  # The Natural Language Toolkit (used for data/tokenizers if needed, though RoBERTa is primary)
+
+# Security and Environment Management
+python-dotenv
