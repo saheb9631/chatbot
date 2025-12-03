@@ -19,10 +19,10 @@ This hybrid design enables both **human-like responses** and **high-value analyt
 ## 📸 Screenshots Gallery
 
 ### 🌞 Light Theme  
-<img width="350" height="500"  alt="Image" src="https://github.com/user-attachments/assets/eda5b0c0-6014-48fe-983b-58a12624c63a" />
+<img width="550" height="700"  alt="Image" src="https://github.com/user-attachments/assets/eda5b0c0-6014-48fe-983b-58a12624c63a" />
 
 ### 🌙 Dark Theme  
-<img width="350" height="500"  alt="Image" src="https://github.com/user-attachments/assets/533f8682-4516-48c5-b847-41dbd448d211" />
+<img width="550" height="700" alt="Image" src="https://github.com/user-attachments/assets/533f8682-4516-48c5-b847-41dbd448d211" />
 
 ### 💬 Sentiment Chatbot — Main Screen  
 <img width="350" height="500" alt="Image" src="https://github.com/user-attachments/assets/2dfae538-3953-44ad-a0d7-585ea74a0dc2" />
