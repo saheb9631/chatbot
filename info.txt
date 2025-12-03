@@ -83,5 +83,5 @@ With the environment active and the key set, you can now run the main script.
 Bash
 
 # Run the chatbot program
-python main.py
+python app.py
 The chatbot should initialize the models and prompt you with the welcome message, ready for conversation!
